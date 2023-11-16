@@ -7,27 +7,35 @@ using UnityEngine;
 public class Waypoint : MonoBehaviour
 {
     [SerializeField] GameObject dogPrefab;
-    ParticleSystem hoverVFX;
+    [SerializeField] ParticleSystem hoverDeployVFX;
+    [SerializeField] ParticleSystem hoverDestroyVFX;
 
     [SerializeField] bool isPlaceable;
-
-    private void Start()
-    {
-        hoverVFX = GetComponent<ParticleSystem>();
-    }
 
     private void OnMouseOver()
     {
         if (isPlaceable)
         {
-            if (!hoverVFX.isPlaying)
+            if (!hoverDeployVFX.isPlaying)
             {
-                SelectorVFX(true);
+                SelectorVFX(true, hoverDeployVFX);
             }
 
             if (Input.GetMouseButtonDown(0))
             {
                 DogInstantiator();
+            }
+        }
+        else
+        {
+            if (!hoverDestroyVFX.isPlaying)
+            {
+                SelectorVFX(true, hoverDestroyVFX);
+            }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                DogRemover();
             }
         }
     }
@@ -36,30 +44,46 @@ public class Waypoint : MonoBehaviour
     {
         if (isPlaceable)
         {
-            if (hoverVFX.isPlaying)
+            if (hoverDeployVFX.isPlaying)
             {
-                SelectorVFX(false);
+                SelectorVFX(false, hoverDeployVFX);
+            }
+        }
+        else
+        {
+            if (hoverDestroyVFX.isPlaying)
+            {
+                SelectorVFX(false, hoverDestroyVFX);
             }
         }
     }
 
     private void DogInstantiator()
     {
-        Instantiate(dogPrefab, transform.position, Quaternion.identity);
+        Instantiate(dogPrefab, transform.position, Quaternion.identity, transform);
         isPlaceable = false;
 
-        SelectorVFX(false);
+        SelectorVFX(false, hoverDeployVFX);
     }
 
-    private void SelectorVFX(bool isHovering)
+    private void DogRemover()
+    {
+        GameObject dog = GetComponentInChildren<TargetLocator>().gameObject;
+        Destroy(dog);
+        isPlaceable = true;
+
+        SelectorVFX(false, hoverDestroyVFX);
+    }
+
+    private void SelectorVFX(bool isHovering, ParticleSystem selectVFX)
     {
         if (isHovering)
         {
-            hoverVFX.Play();
+            selectVFX.Play();
         }
         else
         {
-            hoverVFX.Stop();
+            selectVFX.Stop();
         }
     }
 }

@@ -7,9 +7,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1843198341480313490, guid: 6ec7cab73364deb48a9ead80b3609a6b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4088757895571419614, guid: 6ec7cab73364deb48a9ead80b3609a6b, type: 3}
       propertyPath: m_Name
-      value: Tile_Path_Turn Variant
+      value: Tile_Path_Turn90
       objectReference: {fileID: 0}
     - target: {fileID: 4088757895571419615, guid: 6ec7cab73364deb48a9ead80b3609a6b, type: 3}
       propertyPath: m_RootOrder
@@ -54,6 +58,10 @@ PrefabInstance:
     - target: {fileID: 4088757895571419615, guid: 6ec7cab73364deb48a9ead80b3609a6b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8510804470865694380, guid: 6ec7cab73364deb48a9ead80b3609a6b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ec7cab73364deb48a9ead80b3609a6b, type: 3}

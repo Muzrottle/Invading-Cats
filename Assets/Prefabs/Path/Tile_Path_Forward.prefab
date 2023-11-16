@@ -94,6 +94,10 @@ PrefabInstance:
       propertyPath: isPlaceable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1451683679594276231, guid: a0d91b8eb359da44e9bef780ba6df656, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1845476700766912952, guid: a0d91b8eb359da44e9bef780ba6df656, type: 3}
       propertyPath: m_Name
       value: Tile_Path_Forward
@@ -140,6 +144,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1845476700766912953, guid: a0d91b8eb359da44e9bef780ba6df656, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467107500360261647, guid: a0d91b8eb359da44e9bef780ba6df656, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4086462287842804468, guid: a0d91b8eb359da44e9bef780ba6df656, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6286514349991460554, guid: a0d91b8eb359da44e9bef780ba6df656, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:

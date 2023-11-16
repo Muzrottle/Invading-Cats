@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -17,26 +18,46 @@ public class Waypoint : MonoBehaviour
 
     private void OnMouseOver()
     {
-        if (!isPlaceable)
-            return;
-
-        if (!hoverVFX.isPlaying)
+        if (isPlaceable)
         {
-            hoverVFX.Play();
-        }
+            if (!hoverVFX.isPlaying)
+            {
+                SelectorVFX(true);
+            }
 
-        if (Input.GetMouseButtonDown(0)) 
-        {
-            Instantiate(dogPrefab, gameObject.transform);
+            if (Input.GetMouseButtonDown(0))
+            {
+                DogInstantiator();
+            }
         }
     }
 
     private void OnMouseExit()
     {
-        if (!isPlaceable)
-            return;
+        if (isPlaceable)
+        {
+            if (hoverVFX.isPlaying)
+            {
+                SelectorVFX(false);
+            }
+        }
+    }
 
-        if (hoverVFX.isPlaying)
+    private void DogInstantiator()
+    {
+        Instantiate(dogPrefab, transform.position, Quaternion.identity);
+        isPlaceable = false;
+
+        SelectorVFX(false);
+    }
+
+    private void SelectorVFX(bool isHovering)
+    {
+        if (isHovering)
+        {
+            hoverVFX.Play();
+        }
+        else
         {
             hoverVFX.Stop();
         }

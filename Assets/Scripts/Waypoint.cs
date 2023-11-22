@@ -11,6 +11,8 @@ public class Waypoint : MonoBehaviour
     [SerializeField] ParticleSystem hoverDestroyVFX;
 
     [SerializeField] bool isPlaceable;
+    public bool IsPlaceable { get{ return isPlaceable; } }
+
 
     private void OnMouseOver()
     {

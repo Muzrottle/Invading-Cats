@@ -6,20 +6,32 @@ using UnityEngine;
 
 public class Waypoint : MonoBehaviour
 {
-    [SerializeField] GameObject dogPrefab;
+    [SerializeField] Tower tower;
+    [SerializeField] GameObject dog;
+    [SerializeField] EditTowers editTowers;
     [SerializeField] ParticleSystem hoverDeployVFX;
     [SerializeField] ParticleSystem hoverDestroyVFX;
 
+    [SerializeField] bool hasPlaced;
     [SerializeField] bool isPlaceable;
     public bool IsPlaceable { get{ return isPlaceable; } }
 
 
+    private void Awake()
+    {
+        editTowers = FindObjectOfType<EditTowers>();
+    }
+
     private void OnMouseOver()
     {
-        if (isPlaceable)
+        if (!editTowers.CanModify)
+            return;
+
+        if (isPlaceable && !hasPlaced)
         {
             if (!hoverDeployVFX.isPlaying)
             {
+                dog.SetActive(true);
                 SelectorVFX(true, hoverDeployVFX);
             }
 
@@ -28,10 +40,11 @@ public class Waypoint : MonoBehaviour
                 DogInstantiator();
             }
         }
-        else
+        else if (isPlaceable && hasPlaced)
         {
             if (!hoverDestroyVFX.isPlaying)
             {
+                dog.SetActive(false);
                 SelectorVFX(true, hoverDestroyVFX);
             }
 
@@ -44,17 +57,22 @@ public class Waypoint : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (isPlaceable)
+        if (!editTowers.CanModify)
+            return;
+
+        if (isPlaceable && !hasPlaced)
         {
             if (hoverDeployVFX.isPlaying)
             {
+                dog.SetActive(false);
                 SelectorVFX(false, hoverDeployVFX);
             }
         }
-        else
+        else if (isPlaceable && hasPlaced)
         {
             if (hoverDestroyVFX.isPlaying)
             {
+                dog.SetActive(false);
                 SelectorVFX(false, hoverDestroyVFX);
             }
         }
@@ -62,17 +80,19 @@ public class Waypoint : MonoBehaviour
 
     private void DogInstantiator()
     {
-        Instantiate(dogPrefab, transform.position, Quaternion.identity, transform);
-        isPlaceable = false;
+        hasPlaced = tower.CreateTower(tower, transform.position, transform);
 
-        SelectorVFX(false, hoverDeployVFX);
+        if (hasPlaced)
+        {
+            SelectorVFX(false, hoverDeployVFX);
+        }
     }
 
     private void DogRemover()
     {
         GameObject dog = GetComponentInChildren<TargetLocator>().gameObject;
         Destroy(dog);
-        isPlaceable = true;
+        hasPlaced = false;
 
         SelectorVFX(false, hoverDestroyVFX);
     }

@@ -7,13 +7,18 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] int maxHP = 5;
-    int currentHP = 0;
+    [SerializeField] int currentHP = 0;
 
+    Enemy enemy;
 
-    // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
         currentHP = maxHP;
+    }
+
+    void Start()
+    {
+        enemy = GetComponent<Enemy>();
     }
 
     private void OnParticleCollision(GameObject other)
@@ -31,7 +36,8 @@ public class EnemyHealth : MonoBehaviour
         {
             Debug.Log("I died!");
 
-            Destroy(gameObject);
+            enemy.RewardGold();
+            gameObject.SetActive(false);
         }
     }
 }

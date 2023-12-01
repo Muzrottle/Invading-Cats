@@ -7,7 +7,6 @@ using UnityEngine;
 public class Waypoint : MonoBehaviour
 {
     [SerializeField] Tower tower;
-    [SerializeField] GameObject dog;
     [SerializeField] EditTowers editTowers;
     [SerializeField] ParticleSystem hoverDeployVFX;
     [SerializeField] ParticleSystem hoverDestroyVFX;
@@ -31,7 +30,7 @@ public class Waypoint : MonoBehaviour
         {
             if (!hoverDeployVFX.isPlaying)
             {
-                dog.SetActive(true);
+                editTowers.Displayer(true, transform);
                 SelectorVFX(true, hoverDeployVFX);
             }
 
@@ -44,7 +43,7 @@ public class Waypoint : MonoBehaviour
         {
             if (!hoverDestroyVFX.isPlaying)
             {
-                dog.SetActive(false);
+                editTowers.Displayer(false, transform);
                 SelectorVFX(true, hoverDestroyVFX);
             }
 
@@ -64,7 +63,7 @@ public class Waypoint : MonoBehaviour
         {
             if (hoverDeployVFX.isPlaying)
             {
-                dog.SetActive(false);
+                editTowers.Displayer(false, transform);
                 SelectorVFX(false, hoverDeployVFX);
             }
         }
@@ -72,7 +71,7 @@ public class Waypoint : MonoBehaviour
         {
             if (hoverDestroyVFX.isPlaying)
             {
-                dog.SetActive(false);
+                editTowers.Displayer(false, transform);
                 SelectorVFX(false, hoverDestroyVFX);
             }
         }

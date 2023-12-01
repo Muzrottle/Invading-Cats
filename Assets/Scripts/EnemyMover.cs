@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Enemy))]
 public class EnemyMover : MonoBehaviour
 {
     [SerializeField] List<Waypoint> path = new List<Waypoint>();
@@ -26,11 +27,16 @@ public class EnemyMover : MonoBehaviour
     {
         path.Clear();
 
-        GameObject[] waypoints = GameObject.FindGameObjectsWithTag("Path");
+        GameObject parent = GameObject.FindGameObjectWithTag("Path");
 
-        foreach (GameObject waypoint in waypoints)
+        foreach (Transform child in parent.transform)
         {
-            path.Add(waypoint.GetComponent<Waypoint>());
+            Waypoint waypoint = child.GetComponent<Waypoint>();
+
+            if (waypoint != null)
+            {
+                path.Add(child.GetComponent<Waypoint>());
+            }
         }
     }
 
@@ -63,9 +69,8 @@ public class EnemyMover : MonoBehaviour
                 yield return new WaitForEndOfFrame();
             }
         }
-        
-        enemy.StealGold();
-        gameObject.SetActive(false);
+
+        FinishPath();
     }
 
     float degreesToRotate(Vector3 currentDir, Vector3 currentPosition, Vector3 endPosition)
@@ -73,4 +78,12 @@ public class EnemyMover : MonoBehaviour
         Vector3 targetDir = endPosition - currentPosition;
         return Vector3.SignedAngle(currentDir, targetDir, Vector3.up);
     }
+
+    void FinishPath()
+    {
+        enemy.StealGold();
+        gameObject.SetActive(false);
+    }
+
+    
 }

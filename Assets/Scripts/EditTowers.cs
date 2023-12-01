@@ -5,12 +5,20 @@ using UnityEngine.UI;
 
 public class EditTowers : MonoBehaviour
 {
-    [SerializeField] bool canModify;
-    public bool CanModify { get { return canModify; } }
+    [SerializeField] GameObject dogDisplay;
 
     [SerializeField] Button modifyBtn;
     [SerializeField] Sprite switchPressed;
     [SerializeField] Sprite switchNotPressed;
+
+    [SerializeField] bool canModify;
+    public bool CanModify { get { return canModify; } }
+
+    public void Displayer(bool isVisible, Transform tilePos)
+    {
+        dogDisplay.transform.position = tilePos.position;
+        dogDisplay.SetActive(isVisible);
+    }
 
     public void ModifySwitch()
     {

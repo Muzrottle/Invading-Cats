@@ -38,7 +38,7 @@ public class Bank : MonoBehaviour
 
     private void UpdateBalanceText()
     {
-        coinText.text = $"Coin: {currentBalance}";
+        coinText.text = $"{currentBalance}";
     }
 
     void ReloadScene()

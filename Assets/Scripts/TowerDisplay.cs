@@ -47,8 +47,6 @@ public class TowerDisplay : MonoBehaviour
             rotationTimer += Time.deltaTime;
             sizeTimer += Time.deltaTime * sizeRate;
 
-            Debug.Log(sizeTimer);
-
             //Position
             if (positionTimer >= positionPeriodTime)
             {

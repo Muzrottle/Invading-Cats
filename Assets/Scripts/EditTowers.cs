@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using System.Xml.Linq;
+using System.Linq.Expressions;
+using UnityEngine.EventSystems;
 
 public class EditTowers : MonoBehaviour
 {
@@ -24,16 +26,22 @@ public class EditTowers : MonoBehaviour
     [Header("Side Menus")]
     [SerializeField] GameObject upgradeTab;
     [SerializeField] GameObject constructionTab;
-    
+
+    bool canDisplayVFX;
+    bool canDeployVFX;
+    bool canDestroyVFX;
+
+    Bank bank;
+
     Vector3 transformUpgrade;
     Vector3 transformConstruction;
     float menuSpeed = 1f;
+    int editCase = 0;
 
     //[Header("Side Menu Buttons")]
     //[SerializeField] List<Button> constructionButtons = new List<Button>();
 
     [SerializeField] bool canModify;
-    bool gecici;
     public bool CanModify { get { return canModify; } }
 
     private void Start()
@@ -41,6 +49,7 @@ public class EditTowers : MonoBehaviour
         transformUpgrade = upgradeTab.transform.localPosition;
         transformConstruction = constructionTab.transform.localPosition;
         
+        bank = FindObjectOfType<Bank>();
         //FindEditButtons();
     }
 
@@ -49,11 +58,14 @@ public class EditTowers : MonoBehaviour
         if (waypoint == null)
             return;
 
-        if (gecici) 
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        if (CanModify) 
         {
             if (Input.GetMouseButtonDown(0))
             {
-                DogInstantiator();
+                CaseSelector();
                 HandleEditVFX();
             }
         }
@@ -61,7 +73,7 @@ public class EditTowers : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                DogRemover();
+                CaseSelector();
                 HandleEditVFX();
             }
         }
@@ -113,75 +125,154 @@ public class EditTowers : MonoBehaviour
         if (waypoint == null)
             return;
 
+        bool changeVFXPos = false;
+
         //We check hasPlaced besides isPlaceable because of VFX. If we only checked isPlaceable then our cats path also uses our destroyVFX.
         //hasPlaced is helping us to know if a dog is deployed or not. isPlaceable on the other hand is checks for the tile is usable for towers.
-        if (waypoint.IsPlaceable && !waypoint.HasPlaced)
+        switch (editCase)
         {
-            TowerDisplayerVFX(true, waypoint.transform);
-            SelectorVFX(true, hoverDeployVFX, waypoint.transform);
-            SelectorVFX(false, hoverDestroyVFX, waypoint.transform);
-
-            //if (Input.GetMouseButtonDown(0))
-            //{
-            //    DogInstantiator();
-            //}
-
-            gecici = true;
+            case 0:
+                if (waypoint.IsPlaceable && !waypoint.HasPlaced)
+                {
+                    canDisplayVFX = true;
+                    canDeployVFX = true;
+                    canDestroyVFX = false;
+                    changeVFXPos = true;
+                }
+                else if (waypoint.IsPlaceable && waypoint.HasPlaced)
+                {
+                    canDisplayVFX = false;
+                    canDeployVFX = false;
+                    canDestroyVFX = true;
+                    changeVFXPos = true;
+                }
+                else
+                {
+                    canDisplayVFX = false;
+                    canDeployVFX = false;
+                    canDestroyVFX = false;
+                    changeVFXPos = false;
+                }
+                break;
+            case 1:
+                if (waypoint.placedObject != null)
+                {
+                    if (waypoint.placedObject.GetComponent<DestroyableObstacle>())
+                    {
+                        canDisplayVFX = false;
+                        canDeployVFX = false;
+                        canDestroyVFX = true;
+                        changeVFXPos = true;
+                    }
+                    else
+                    {
+                        Debug.Log("Girdim");
+                        canDisplayVFX = false;
+                        canDeployVFX = false;
+                        canDestroyVFX = false;
+                        changeVFXPos = false;
+                    }
+                }
+                else
+                {
+                    Debug.Log("Girdim");
+                    canDisplayVFX = false;
+                    canDeployVFX = false;
+                    canDestroyVFX = false;
+                    changeVFXPos = false;
+                }
+                break;
+            default:
+                Debug.Log("Olmuyor kanka.");
+                break;
         }
-        else if (waypoint.IsPlaceable && waypoint.HasPlaced)
-        {
-            TowerDisplayerVFX(false, waypoint.transform);
-            SelectorVFX(false, hoverDeployVFX, waypoint.transform);
-            SelectorVFX(true, hoverDestroyVFX, waypoint.transform);
 
-            //if (Input.GetMouseButtonDown(0))
-            //{
-            //    DogRemover();
-            //}
-
-            gecici = false;
-        }
+        TowerDisplayerVFX(canDisplayVFX, changeVFXPos, waypoint.transform);
+        SelectorVFX(canDeployVFX, hoverDeployVFX, changeVFXPos, waypoint.transform);
+        SelectorVFX(canDestroyVFX, hoverDestroyVFX, changeVFXPos, waypoint.transform);
     }
 
     //We check waypoints(tiles) for dogDisplay purposes. This is also kind of a VFX.
-    public void TowerDisplayerVFX(bool isVisible, Transform tilePos)
+    public void TowerDisplayerVFX(bool isVisible, bool isPosChange, Transform tilePos)
     {
-        dogDisplay.transform.position = tilePos.position;
+        if (isPosChange)
+        {
+            dogDisplay.transform.position = tilePos.position;
+        }
+        
         dogDisplay.SetActive(isVisible);
     }
 
-    private void SelectorVFX(bool isHovering, ParticleSystem selectVFX, Transform tilePos)
+    private void SelectorVFX(bool isHovering, ParticleSystem selectVFX, bool isPosChange, Transform tilePos)
     {
         if (isHovering)
         {
-            selectVFX.gameObject.transform.position = tilePos.position;
             selectVFX.Play();
         }
         else
         {
-            selectVFX.gameObject.transform.position = tilePos.position;
             selectVFX.Stop();
+        }
+
+        if (isPosChange)
+        {
+            selectVFX.gameObject.transform.position = tilePos.position;
+        }
+    }
+
+    public void SetCase(EditButton editButton)
+    {
+        editCase = editButton.myEditCase;
+        HandleEditVFX();
+    }
+
+    private void CaseSelector()
+    {
+        switch(editCase)
+        {
+            case 0:
+                if (waypoint.IsPlaceable && !waypoint.HasPlaced)
+                    DogInstantiator();
+                else if (waypoint.IsPlaceable && waypoint.HasPlaced)
+                    DogRemover();
+                break;
+            case 1:
+                if (waypoint.placedObject != null)
+                    ObstacleRemover(waypoint.placedObject, waypoint.placedObject.GetComponent<DestroyableObstacle>());
+                break;
+            default:
+                Debug.Log("Olmuyor kanka.");
+                break;
         }
     }
 
     private void DogInstantiator()
     {
         bool placed = tower.CreateTower(tower, waypoint.transform.position, waypoint.transform);
-        waypoint.TowerPlaced(placed);
-
-        if (waypoint.HasPlaced)
-        {
-            SelectorVFX(false, hoverDeployVFX, waypoint.transform);
-        }
+        waypoint.SetTilePlacement(placed);
     }
 
     private void DogRemover()
     {
         GameObject dog = waypoint.GetComponentInChildren<Tower>().gameObject;
         bool placed = tower.DestroyTower(dog);
-        waypoint.TowerPlaced(placed);
+        waypoint.SetTilePlacement(placed);
+    }
 
-        SelectorVFX(false, hoverDestroyVFX, waypoint.transform);
+    private void ObstacleRemover(GameObject destroyObject, DestroyableObstacle destroyableObstacle)
+    {
+        if (destroyableObstacle == null)
+            return;
+
+        if (bank.CurrentBalance < destroyableObstacle.RemovePrice)
+            return;
+
+        Destroy(destroyObject);
+        
+        waypoint.placedObject = null;
+        waypoint.MakeIsPlaceableTrue();
+        
+        bank.Withdraw(destroyableObstacle.RemovePrice);
     }
 
     //public void DisplayName(Button pressedButton)

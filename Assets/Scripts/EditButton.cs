@@ -9,4 +9,5 @@ public class EditButton : MonoBehaviour
     public bool isHovered;
     public bool isPressed;
     public bool isMainEditButton;
+    public int myEditCase = 0;
 }

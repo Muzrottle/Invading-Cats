@@ -124,7 +124,12 @@ public class Waypoint : MonoBehaviour
         isPlaceable = false;
     }
 
-    public void TowerPlaced(bool placed)
+    public void MakeIsPlaceableTrue()
+    {
+        isPlaceable = true;
+    }
+
+    public void SetTilePlacement(bool placed)
     {
         hasPlaced = placed;
     }

@@ -10,8 +10,9 @@ using UnityEngine.EventSystems;
 
 public class EditTowers : MonoBehaviour
 {
-    [Header("Current Waypoint")]
-    [SerializeField]Waypoint waypoint;
+    [Header("Current Tile")]
+    [SerializeField] Tile tile;
+    [SerializeField] Vector2Int tileCoordinates;
 
     [Header("EditVFX")]
     [SerializeField] ParticleSystem hoverDeployVFX;
@@ -32,6 +33,8 @@ public class EditTowers : MonoBehaviour
     bool canDestroyVFX;
 
     Bank bank;
+    GridManager gridManager;
+    Pathfinder pathfinder;
 
     Vector3 transformUpgrade;
     Vector3 transformConstruction;
@@ -50,16 +53,21 @@ public class EditTowers : MonoBehaviour
         transformConstruction = constructionTab.transform.localPosition;
         
         bank = FindObjectOfType<Bank>();
+        gridManager = FindObjectOfType<GridManager>();
+        pathfinder = FindObjectOfType<Pathfinder>();
         //FindEditButtons();
     }
 
     private void Update()
     {
-        if (waypoint == null)
+        if (tile == null)
             return;
 
         if (EventSystem.current.IsPointerOverGameObject())
+        {
+            HandleEditVFX();
             return;
+        }
 
         if (CanModify) 
         {
@@ -110,9 +118,10 @@ public class EditTowers : MonoBehaviour
         constructionTab.transform.DOLocalMove(nextConstructionPos, menuSpeed).SetEase(Ease.OutBounce);
     }
 
-    public void SetWaypoint(Waypoint currentWaypoint)
+    public void SetTile(Tile currentTile, Vector2Int coordinates)
     {
-        waypoint = currentWaypoint;
+        tile = currentTile;
+        tileCoordinates = coordinates;
         HandleEditVFX();
     }
 
@@ -122,9 +131,10 @@ public class EditTowers : MonoBehaviour
         if (!CanModify)
             return;
 
-        if (waypoint == null)
+        if (tile == null)
             return;
 
+        bool mouseOnEditButton = EventSystem.current.IsPointerOverGameObject();
         bool changeVFXPos = false;
 
         //We check hasPlaced besides isPlaceable because of VFX. If we only checked isPlaceable then our cats path also uses our destroyVFX.
@@ -132,14 +142,14 @@ public class EditTowers : MonoBehaviour
         switch (editCase)
         {
             case 0:
-                if (waypoint.IsPlaceable && !waypoint.HasPlaced)
+                if (gridManager.Grid[tileCoordinates].isWalkable && !tile.HasPlaced && !mouseOnEditButton)
                 {
                     canDisplayVFX = true;
                     canDeployVFX = true;
                     canDestroyVFX = false;
                     changeVFXPos = true;
                 }
-                else if (waypoint.IsPlaceable && waypoint.HasPlaced)
+                else if (!gridManager.Grid[tileCoordinates].isWalkable && tile.HasPlaced && !mouseOnEditButton)
                 {
                     canDisplayVFX = false;
                     canDeployVFX = false;
@@ -155,9 +165,9 @@ public class EditTowers : MonoBehaviour
                 }
                 break;
             case 1:
-                if (waypoint.placedObject != null)
+                if (tile.placedObject != null)
                 {
-                    if (waypoint.placedObject.GetComponent<DestroyableObstacle>())
+                    if (tile.placedObject.GetComponent<DestroyableObstacle>())
                     {
                         canDisplayVFX = false;
                         canDeployVFX = false;
@@ -187,12 +197,12 @@ public class EditTowers : MonoBehaviour
                 break;
         }
 
-        TowerDisplayerVFX(canDisplayVFX, changeVFXPos, waypoint.transform);
-        SelectorVFX(canDeployVFX, hoverDeployVFX, changeVFXPos, waypoint.transform);
-        SelectorVFX(canDestroyVFX, hoverDestroyVFX, changeVFXPos, waypoint.transform);
+        TowerDisplayerVFX(canDisplayVFX, changeVFXPos, tile.transform);
+        SelectorVFX(canDeployVFX, hoverDeployVFX, changeVFXPos, tile.transform);
+        SelectorVFX(canDestroyVFX, hoverDestroyVFX, changeVFXPos, tile.transform);
     }
 
-    //We check waypoints(tiles) for dogDisplay purposes. This is also kind of a VFX.
+    //We check tiles for dogDisplay purposes. This is also kind of a VFX.
     public void TowerDisplayerVFX(bool isVisible, bool isPosChange, Transform tilePos)
     {
         if (isPosChange)
@@ -228,17 +238,19 @@ public class EditTowers : MonoBehaviour
 
     private void CaseSelector()
     {
+        Debug.Log(tile.name);
+
         switch(editCase)
         {
             case 0:
-                if (waypoint.IsPlaceable && !waypoint.HasPlaced)
+                if (gridManager.Grid[tileCoordinates].isWalkable && !tile.HasPlaced && !pathfinder.WillBlockPath(tileCoordinates))
                     DogInstantiator();
-                else if (waypoint.IsPlaceable && waypoint.HasPlaced)
+                else if (!gridManager.Grid[tileCoordinates].isWalkable && tile.HasPlaced && !pathfinder.WillBlockPath(tileCoordinates))
                     DogRemover();
                 break;
             case 1:
-                if (waypoint.placedObject != null)
-                    ObstacleRemover(waypoint.placedObject, waypoint.placedObject.GetComponent<DestroyableObstacle>());
+                if (tile.placedObject != null)
+                    ObstacleRemover(tile.placedObject, tile.placedObject.GetComponent<DestroyableObstacle>());
                 break;
             default:
                 Debug.Log("Olmuyor kanka.");
@@ -248,15 +260,22 @@ public class EditTowers : MonoBehaviour
 
     private void DogInstantiator()
     {
-        bool placed = tower.CreateTower(tower, waypoint.transform.position, waypoint.transform);
-        waypoint.SetTilePlacement(placed);
+        bool placed = tower.CreateTower(tower, tile.transform.position, tile.transform);
+        tile.SetTilePlacement(placed);
+        if (placed)
+        {
+            gridManager.BlockNode(tileCoordinates);
+            pathfinder.NotifyRecievers();
+        }
     }
 
     private void DogRemover()
     {
-        GameObject dog = waypoint.GetComponentInChildren<Tower>().gameObject;
+        GameObject dog = tile.GetComponentInChildren<Tower>().gameObject;
         bool placed = tower.DestroyTower(dog);
-        waypoint.SetTilePlacement(placed);
+        tile.SetTilePlacement(placed);
+        gridManager.UnblockNode(tileCoordinates);
+        pathfinder.NotifyRecievers();
     }
 
     private void ObstacleRemover(GameObject destroyObject, DestroyableObstacle destroyableObstacle)
@@ -269,8 +288,8 @@ public class EditTowers : MonoBehaviour
 
         Destroy(destroyObject);
         
-        waypoint.placedObject = null;
-        waypoint.MakeIsPlaceableTrue();
+        tile.placedObject = null;
+        tile.MakeIsPlaceableTrue();
         
         bank.Withdraw(destroyableObstacle.RemovePrice);
     }

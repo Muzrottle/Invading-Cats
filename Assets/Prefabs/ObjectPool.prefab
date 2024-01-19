@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2548525783989276239}
   - component: {fileID: 2548525783989276232}
+  - component: {fileID: 1386337482423159732}
   m_Layer: 0
   m_Name: ObjectPool
   m_TagString: Untagged
@@ -45,5 +46,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 1585349779547952, guid: aa2d47f95b34fbe4d9cbe095f13585b5, type: 3}
-  poolSize: 5
+  poolSize: 6
   spawnTime: 2
+--- !u!114 &1386337482423159732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2548525783989276233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb5b30339905ef2419d2617212bb4975, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

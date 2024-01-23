@@ -8,9 +8,16 @@ public class Tower : MonoBehaviour
 {
     [SerializeField] int cost = 75;
     [SerializeField] int sell = 50;
+    [SerializeField] int upgrade = 25;
     [SerializeField] float buildSecForEachPart = 0.2f;
+    [SerializeField] float atkSpeedIncRate = 20f;
+    [SerializeField] float atkRangeIncRate = 10f;
+    public ParticleSystem myParticleSystem;
+    [SerializeField] GameObject stars;
 
-    public bool CreateTower(Tower tower, Vector3 position, Transform parent)
+    int powerLevel = 0;
+
+    public bool CreateTower(Tower tower, Tile tile)
     {
         Bank bank = FindObjectOfType<Bank>();
 
@@ -19,30 +26,33 @@ public class Tower : MonoBehaviour
 
         if (bank.CurrentBalance >= cost) 
         {
-            GameObject dog = Instantiate(tower.gameObject, position, Quaternion.identity, parent);
-            Tower dogTower = dog.GetComponent<Tower>();
+            GameObject buildingTower = Instantiate(tower.gameObject, tile.transform.position, Quaternion.identity, tile.transform);
+            tile.SetTilePlacement(true, buildingTower);
+
+            Tower dogTower = buildingTower.GetComponent<Tower>();
 
             bank.Withdraw(cost);
-            dogTower.StartCoroutine(BuildDog(dog));
+            dogTower.StartCoroutine(BuildDog(buildingTower));
 
             return true;
         }
         else
         {
+            tile.SetTilePlacement(false);
             return false;
         }
     }
 
-    IEnumerator BuildDog(GameObject dog)
+    IEnumerator BuildDog(GameObject buildingTower)
     {
-        foreach (Transform child in dog.transform)
+        foreach (Transform child in buildingTower.GetComponentInChildren<TargetLocator>().transform)
         {
             child.gameObject.SetActive(false);
         }
 
         int i = 0;
 
-        foreach (Transform child in dog.transform)
+        foreach (Transform child in buildingTower.GetComponentInChildren<TargetLocator>().transform)
         {
             child.gameObject.SetActive(true);
             Debug.Log(i);
@@ -50,10 +60,10 @@ public class Tower : MonoBehaviour
             yield return new WaitForSeconds(buildSecForEachPart);
         }
 
-        dog.GetComponent<TargetLocator>().enabled = true;
+        buildingTower.GetComponentInChildren<TargetLocator>().enabled = true;
     }
 
-    public bool DestroyTower(GameObject tower)
+    public bool DestroyTower(GameObject tower, Tile tile)
     {
         Bank bank = FindObjectOfType<Bank>();
 
@@ -63,9 +73,42 @@ public class Tower : MonoBehaviour
         }
         else
         {
+            tile.SetTilePlacement(false, tower.gameObject);
             Destroy(tower.gameObject);
             bank.Deposit(sell);
             return false;
         }
+    }
+
+    public void TowerPowerUp()
+    {
+        Bank bank = FindObjectOfType<Bank>();
+
+        if (powerLevel == 3 || bank == null)
+        {
+            return;
+        }
+        else
+        {
+            bank.Withdraw(upgrade);
+        }
+
+        powerLevel += 1;
+        int currentLevel = powerLevel;
+
+        foreach (Transform star in stars.transform)
+        {
+            star.gameObject.SetActive(true);
+            currentLevel--;
+
+            if (currentLevel == 0)
+            {
+                break;
+            }
+        }
+
+        ParticleSystem.MainModule mainModule= myParticleSystem.main;
+        mainModule.startSpeedMultiplier += atkSpeedIncRate;
+        gameObject.GetComponentInChildren<TargetLocator>().range += atkRangeIncRate;
     }
 }

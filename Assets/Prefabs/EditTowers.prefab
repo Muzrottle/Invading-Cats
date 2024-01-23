@@ -835,10 +835,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ff33f141b983b042873dc4c88d32c45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waypoint: {fileID: 0}
+  tile: {fileID: 0}
+  tileCoordinates: {x: 0, y: 0}
   hoverDeployVFX: {fileID: 3338798907762466658}
   hoverDestroyVFX: {fileID: 5066686145622806611}
-  tower: {fileID: -4854753360634565919, guid: 7451ef01e53127446b9d7406220542f6, type: 3}
+  tower: {fileID: 2342076746548582202, guid: 7451ef01e53127446b9d7406220542f6, type: 3}
   dogDisplay: {fileID: 8340192150962333191}
   upgradeTab: {fileID: 0}
   constructionTab: {fileID: 0}
@@ -855,12 +856,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ac28211482a1da4ea5c9e160d66cecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideTabs: []
+  sideTabs:
+  - {fileID: 0}
+  - {fileID: 0}
   editButtons: []
-  buttonDefault: {fileID: 21300000, guid: fd3d814fb025b4740b46a1f231e660c0, type: 3}
-  buttonPressed: {fileID: 21300000, guid: 3b403a5e73b29694d95688f6287de118, type: 3}
-  buttonHovered: {fileID: 21300000, guid: 807db7ff638f71c41b088b4274424f5c, type: 3}
-  pressedButton: {fileID: 0}
+  buttonDefault: {fileID: 21300000, guid: 3bef5dbecf92c31428e279418e128155, type: 3}
+  buttonPressed: {fileID: 21300000, guid: bbc8eb86c86ce144ca03dad8cf353c42, type: 3}
+  buttonHovered: {fileID: 21300000, guid: 2f29ac0a08730474f855ed61c3fedb45, type: 3}
+  descBackground: {fileID: 0}
+  desc: {fileID: 0}
+  descOpenDuration: 1
+  descRotationDuration: 2
 --- !u!1001 &4890197859194529951
 PrefabInstance:
   m_ObjectHideFlags: 0

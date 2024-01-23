@@ -87,17 +87,6 @@ public class EditTowers : MonoBehaviour
         }
     }
 
-    //private void FindEditButtons()
-    //{
-    //    foreach (Button button in constructionTab.GetComponentsInChildren<Button>())
-    //    {
-    //        if (button != null)
-    //        {
-    //            constructionButtons.Add(button);
-    //        }
-    //    }
-    //}
-
     public void ModifySwitch()
     {
         canModify = !canModify;
@@ -192,6 +181,34 @@ public class EditTowers : MonoBehaviour
                     changeVFXPos = false;
                 }
                 break;
+            case 2:
+                if (tile.placedObject != null)
+                {
+                    if (tile.placedObject.GetComponent<Tower>() != null)
+                    {
+                        canDisplayVFX = false;
+                        canDeployVFX = true;
+                        canDestroyVFX = false;
+                        changeVFXPos = true;
+                    }
+                    else
+                    {
+                        Debug.Log("Girdim");
+                        canDisplayVFX = false;
+                        canDeployVFX = false;
+                        canDestroyVFX = false;
+                        changeVFXPos = false;
+                    }
+                }
+                else
+                {
+                    Debug.Log("Girdim");
+                    canDisplayVFX = false;
+                    canDeployVFX = false;
+                    canDestroyVFX = false;
+                    changeVFXPos = false;
+                }
+                break;
             default:
                 Debug.Log("Olmuyor kanka.");
                 break;
@@ -252,6 +269,13 @@ public class EditTowers : MonoBehaviour
                 if (tile.placedObject != null)
                     ObstacleRemover(tile.placedObject, tile.placedObject.GetComponent<DestroyableObstacle>());
                 break;
+            case 2:
+                if (tile.placedObject != null)
+                {
+                    if (tile.placedObject.GetComponent<Tower>() != null)
+                        DogPowerUp(tile.placedObject.GetComponent<Tower>());
+                }
+                break;
             default:
                 Debug.Log("Olmuyor kanka.");
                 break;
@@ -260,8 +284,7 @@ public class EditTowers : MonoBehaviour
 
     private void DogInstantiator()
     {
-        bool placed = tower.CreateTower(tower, tile.transform.position, tile.transform);
-        tile.SetTilePlacement(placed);
+        bool placed = tower.CreateTower(tower, tile);
         if (placed)
         {
             gridManager.BlockNode(tileCoordinates);
@@ -272,8 +295,7 @@ public class EditTowers : MonoBehaviour
     private void DogRemover()
     {
         GameObject dog = tile.GetComponentInChildren<Tower>().gameObject;
-        bool placed = tower.DestroyTower(dog);
-        tile.SetTilePlacement(placed);
+        tower.DestroyTower(dog, tile);
         gridManager.UnblockNode(tileCoordinates);
         pathfinder.NotifyRecievers();
     }
@@ -294,15 +316,8 @@ public class EditTowers : MonoBehaviour
         bank.Withdraw(destroyableObstacle.RemovePrice);
     }
 
-    //public void DisplayName(Button pressedButton)
-    //{
-    //    int index = 0;
-
-    //    if (constructionButtons.Contains(pressedButton))
-    //    {
-    //        index = constructionButtons.IndexOf(pressedButton);
-    //        Debug.Log(constructionButtons[index].name);
-
-    //    }
-    //}
+    void DogPowerUp(Tower myTower)
+    {
+        myTower.TowerPowerUp();
+    }
 }

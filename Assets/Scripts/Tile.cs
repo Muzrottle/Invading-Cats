@@ -73,4 +73,19 @@ public class Tile : MonoBehaviour
     {
         hasPlaced = placed;
     }
+
+    public void SetTilePlacement(bool placed, GameObject currentObject)
+    {
+        if (placed)
+        {
+            placedObject = currentObject;
+            hasPlaced = placed;
+        }
+        else
+        {
+            placedObject = null;
+            hasPlaced = placed;
+        }
+        
+    }
 }

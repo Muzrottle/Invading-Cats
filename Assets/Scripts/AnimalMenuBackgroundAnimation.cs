@@ -6,38 +6,67 @@ using UnityEngine.UIElements;
 
 public class AnimalMenuBackgroundAnimation : MonoBehaviour
 {
-    [SerializeField] int animalRows = 5;
-    [SerializeField] float animationSpeed = 2f;
+    [SerializeField] int animalRowCount = 5;
+    [SerializeField] float animationDuration = 2f;
+    [SerializeField] float rowDelay;
+    [SerializeField] Transform[] animalRows;
 
-    Vector2 currentRes;
-    Vector2 startPos;
-    Vector2 endPos;
+    Vector3 currentRes;
+    Vector3 startPos;
+    Vector3 endPos;
 
     // Start is called before the first frame update
     void Start()
     {
-        currentRes = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
-        startPos = new Vector2 (currentRes.x - (currentRes.x / animalRows), currentRes.y + (currentRes.y / animalRows));
-        endPos = new Vector2(currentRes.x + (currentRes.x / animalRows), currentRes.y - (currentRes.y / animalRows));
+        currentRes = new Vector3(Screen.currentResolution.width, Screen.currentResolution.height);
+        startPos = new Vector3(-currentRes.x + (-currentRes.x / 2), currentRes.y / 2);
+        endPos = new Vector3(-currentRes.x + (-currentRes.x / (animalRowCount + 1)), (-currentRes.y) - (-currentRes.y / (animalRowCount - 1)));
+        Debug.Log(startPos);
+        Debug.Log(endPos);
+
+        StartCoroutine(SetNewDuration());
     }
 
-    private void Update()
+    IEnumerator SetNewDuration()
     {
-        BackgroundAnimation();
-    }
-
-    void BackgroundAnimation()
-    {
-        Vector2 currentPos = transform.position;
-
-        while (true)
+        foreach (Transform row in animalRows)
         {
-            if (currentPos.y >= currentRes.y - (currentRes.y / animalRows))
-            {
-                currentRes = startPos;
-            }
+            // Create a sequence for each image
+            Sequence sequence = DOTween.Sequence();
 
-            transform.DOMove(endPos, animationSpeed).SetEase(Ease.InOutQuad);
+            // Move the image to the end position over the specified duration
+            sequence.Append(row.DOLocalMove(endPos, animationDuration).SetEase(Ease.Linear))
+                .SetSpeedBased(true)
+                .SetLoops(-1, LoopType.Restart);
+
+            yield return new WaitForSeconds(rowDelay);
         }
     }
+
+    //private void Update()
+    //{
+    //    Vector3 currentPos = transform.localPosition;
+
+    //    if (currentPos.y <= endPos.y)
+    //    {
+    //        Debug.Log("gÝRDÝM");
+    //        transform.localPosition = startPos;
+    //        inCycle = false;
+    //    }
+
+    //    if (!inCycle)
+    //    {
+    //        inCycle = true;
+    //        BackgroundAnimation();
+    //    }
+    //}
+
+    //void BackgroundAnimation()
+    //{
+
+    //    transform.DOLocalMove(endPos, animationDuration);
+
+
+    //    Debug.Log(endPos);
+    //}
 }

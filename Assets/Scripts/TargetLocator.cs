@@ -7,7 +7,7 @@ using UnityEngine;
 public class TargetLocator : MonoBehaviour
 {
     [SerializeField] ParticleSystem projectileParticles;
-    [SerializeField] float range = 15f;
+    public float range = 15f;
     Transform target;
 
     // Update is called once per frame

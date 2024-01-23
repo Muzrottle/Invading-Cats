@@ -7,8 +7,11 @@ using UnityEngine;
 public class Tower : MonoBehaviour
 {
     [SerializeField] int cost = 75;
+    public int Cost { get { return cost; } }
     [SerializeField] int sell = 50;
+    public int Sell { get { return sell; } }
     [SerializeField] int upgrade = 25;
+    public int Upgrade { get { return upgrade; } }
     [SerializeField] float buildSecForEachPart = 0.2f;
     [SerializeField] float atkSpeedIncRate = 20f;
     [SerializeField] float atkRangeIncRate = 10f;

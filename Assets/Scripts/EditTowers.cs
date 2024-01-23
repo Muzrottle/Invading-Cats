@@ -7,6 +7,7 @@ using DG.Tweening;
 using System.Xml.Linq;
 using System.Linq.Expressions;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class EditTowers : MonoBehaviour
 {
@@ -28,6 +29,9 @@ public class EditTowers : MonoBehaviour
     [SerializeField] GameObject upgradeTab;
     [SerializeField] GameObject constructionTab;
 
+    [Header("Cost Warning Text")]
+    [SerializeField] TextMeshProUGUI costWarning;
+
     bool canDisplayVFX;
     bool canDeployVFX;
     bool canDestroyVFX;
@@ -40,6 +44,7 @@ public class EditTowers : MonoBehaviour
     Vector3 transformConstruction;
     float menuSpeed = 1f;
     int editCase = 0;
+    int currentCost = 0;
 
     //[Header("Side Menu Buttons")]
     //[SerializeField] List<Button> constructionButtons = new List<Button>();
@@ -137,6 +142,9 @@ public class EditTowers : MonoBehaviour
                     canDeployVFX = true;
                     canDestroyVFX = false;
                     changeVFXPos = true;
+
+                    currentCost = tower.Cost;
+                    ShowCostWarning(true, currentCost);
                 }
                 else if (!gridManager.Grid[tileCoordinates].isWalkable && tile.HasPlaced && !mouseOnEditButton)
                 {
@@ -144,6 +152,9 @@ public class EditTowers : MonoBehaviour
                     canDeployVFX = false;
                     canDestroyVFX = true;
                     changeVFXPos = true;
+
+                    currentCost = tower.Sell;
+                    ShowCostWarning(false, currentCost);
                 }
                 else
                 {
@@ -151,6 +162,8 @@ public class EditTowers : MonoBehaviour
                     canDeployVFX = false;
                     canDestroyVFX = false;
                     changeVFXPos = false;
+
+                    HideCostWarning();
                 }
                 break;
             case 1:
@@ -162,14 +175,18 @@ public class EditTowers : MonoBehaviour
                         canDeployVFX = false;
                         canDestroyVFX = true;
                         changeVFXPos = true;
+
+                        currentCost = tile.placedObject.GetComponent<DestroyableObstacle>().RemovePrice;
+                        ShowCostWarning(true, currentCost);
                     }
                     else
                     {
-                        Debug.Log("Girdim");
                         canDisplayVFX = false;
                         canDeployVFX = false;
                         canDestroyVFX = false;
                         changeVFXPos = false;
+
+                        HideCostWarning();
                     }
                 }
                 else
@@ -179,6 +196,8 @@ public class EditTowers : MonoBehaviour
                     canDeployVFX = false;
                     canDestroyVFX = false;
                     changeVFXPos = false;
+
+                    HideCostWarning();
                 }
                 break;
             case 2:
@@ -190,23 +209,28 @@ public class EditTowers : MonoBehaviour
                         canDeployVFX = true;
                         canDestroyVFX = false;
                         changeVFXPos = true;
+
+                        currentCost = tower.Upgrade;
+                        ShowCostWarning(true, currentCost);
                     }
                     else
                     {
-                        Debug.Log("Girdim");
                         canDisplayVFX = false;
                         canDeployVFX = false;
                         canDestroyVFX = false;
                         changeVFXPos = false;
+
+                        HideCostWarning();
                     }
                 }
                 else
                 {
-                    Debug.Log("Girdim");
                     canDisplayVFX = false;
                     canDeployVFX = false;
                     canDestroyVFX = false;
                     changeVFXPos = false;
+
+                    HideCostWarning();
                 }
                 break;
             default:
@@ -247,6 +271,37 @@ public class EditTowers : MonoBehaviour
         }
     }
 
+    void HideCostWarning()
+    {
+        if (costWarning.transform.parent.gameObject.activeInHierarchy)
+        {
+            costWarning.transform.parent.gameObject.SetActive(false);
+        }
+    }
+
+    void ShowCostWarning(bool isOutcome, int cost)
+    {
+        if (!costWarning.transform.parent.gameObject.activeInHierarchy)
+        {
+            costWarning.transform.parent.gameObject.SetActive(true);
+        }
+
+        Color costColor;
+
+        if (isOutcome)
+        {
+            costColor = new Color(0.9528302f, 0.4964519f, 0.4440548f);
+            costWarning.color = costColor;
+            costWarning.text = "-" + currentCost.ToString();
+        }
+        else
+        {
+            costColor = new Color(0.8842016f, 0.9529412f, 0.4431373f);
+            costWarning.color = costColor;
+            costWarning.text = "+" + currentCost.ToString();
+        }
+    }
+
     public void SetCase(EditButton editButton)
     {
         editCase = editButton.myEditCase;
@@ -261,7 +316,9 @@ public class EditTowers : MonoBehaviour
         {
             case 0:
                 if (gridManager.Grid[tileCoordinates].isWalkable && !tile.HasPlaced && !pathfinder.WillBlockPath(tileCoordinates))
+                {
                     DogInstantiator();
+                }
                 else if (!gridManager.Grid[tileCoordinates].isWalkable && tile.HasPlaced && !pathfinder.WillBlockPath(tileCoordinates))
                     DogRemover();
                 break;

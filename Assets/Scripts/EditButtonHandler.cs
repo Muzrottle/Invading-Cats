@@ -18,45 +18,11 @@ public class EditButtonHandler : MonoBehaviour
     [SerializeField] Sprite buttonPressed;
     [SerializeField] Sprite buttonHovered;
 
-    [Header("Button Explanation")]
-    [SerializeField] GameObject descBackground;
-    [SerializeField] TextMeshProUGUI desc;
-    [SerializeField] float descOpenDuration = 2f;
-    [SerializeField] float descRotationDuration = 2f;
-    [SerializeField] float descRotationAngle = 30f;
-
     EditButton pressedButton;
-    Image descBackgroundImg;
-    Sequence descBackgroundRotateSeq;
-    Vector2 descriptionOpenPos;
-    Vector2 descriptionClosePos;
-    Vector3 descLeftRotation;
-    Vector3 descRightRotation;
 
     private void Start()
     {
         FindEditButtons();
-
-        descBackgroundImg = descBackground.GetComponent<Image>();
-        SetDescBackgroundTweens();
-    }
-
-    void SetDescBackgroundTweens()
-    {
-
-        descLeftRotation = new Vector3(0, 0, descBackground.transform.rotation.z - descRotationAngle);
-        descRightRotation = new Vector3(0, 0, descBackground.transform.rotation.z + descRotationAngle);
-        descriptionOpenPos = new Vector2(descBackgroundImg.rectTransform.rect.width, descBackgroundImg.rectTransform.rect.height);
-        descriptionClosePos = new Vector2(0, descBackgroundImg.rectTransform.rect.height);
-        descBackgroundImg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0);
-
-        Sequence descBackgroundRotateSeq = DOTween.Sequence();
-
-        descBackgroundRotateSeq.Append(descBackground.GetComponent<RectTransform>().DORotate(descLeftRotation, descRotationDuration)
-            .OnComplete(() =>
-                descBackground.GetComponent<RectTransform>().DORotate(descRightRotation, descRotationDuration)
-                .SetLoops(-1, LoopType.Yoyo)
-                .SetEase(Ease.InOutQuad)));
     }
 
     private void FindEditButtons()
@@ -123,24 +89,5 @@ public class EditButtonHandler : MonoBehaviour
         }
     }
 
-    public void ShowDescription(TextMeshProUGUI currentDescription)
-    {
-        if (currentDescription != null)
-        {
-            desc.text = currentDescription.text;
-        }
-
-        descBackground.SetActive(true);
-        descBackground.GetComponent<RectTransform>().DOSizeDelta(descriptionOpenPos, descOpenDuration);
-        descBackgroundRotateSeq.Play();
-    }
-
-    public void CloseDescription()
-    {
-        if (descBackground.activeInHierarchy)
-        {
-            descBackground.GetComponent<RectTransform>().DOSizeDelta(descriptionClosePos, descOpenDuration);
-            descBackgroundRotateSeq.Pause();
-        }
-    }
+    
 }

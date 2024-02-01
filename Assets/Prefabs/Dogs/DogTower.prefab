@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 800214963576424431}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Stars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,7 +44,7 @@ GameObject:
   m_Component:
   - component: {fileID: 331476335200189799}
   - component: {fileID: 4284174922205124311}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Star (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,7 +128,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2031026142867066047}
   - component: {fileID: 4604778785529850623}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DogTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -164,11 +164,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c19576d51dd28c45bdac3e1d6ef6f51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cost: 75
+  cost: 100
   sell: 50
+  upgrade: 25
   buildSecForEachPart: 0.2
-  atkSpeedIncRate: 20
-  atkRangeIncRate: 10
+  atkSpeedIncRate: 0.1
+  atkRangeIncRate: 2.5
   myParticleSystem: {fileID: 8707153573599369463}
   stars: {fileID: 651780984403373503}
 --- !u!1 &5817731124610359793
@@ -181,7 +182,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1698837888576017178}
   - component: {fileID: 7048790253161882007}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Star
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -265,7 +266,7 @@ GameObject:
   m_Component:
   - component: {fileID: 117816313516948444}
   - component: {fileID: 6095172499328365942}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Star (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -346,6 +347,46 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2031026142867066047}
     m_Modifications:
+    - target: {fileID: 227791077551195274, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 275330014113819992, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 515262787377655450, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 800209230308827511, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 935752125484264545, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2445301662138450033, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3542078834967042548, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577454288177762688, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4293002368139513082, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8289855559468325627, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 8538670515694039887, guid: be014758566340144b292d4406e6e13c, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -393,6 +434,10 @@ PrefabInstance:
     - target: {fileID: 8587794245620348585, guid: be014758566340144b292d4406e6e13c, type: 3}
       propertyPath: m_Name
       value: Dog
+      objectReference: {fileID: 0}
+    - target: {fileID: 8587794245620348585, guid: be014758566340144b292d4406e6e13c, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4495019572187026556, guid: be014758566340144b292d4406e6e13c, type: 3}

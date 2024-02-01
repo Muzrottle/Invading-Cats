@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PauseMenu : MonoBehaviour
+public class MenuManager : MonoBehaviour
 {
+    [SerializeField] GameObject canvas;
+    [SerializeField] GameObject pauseMenu;
+    [SerializeField] GameObject lostMenu;
     bool isPaused = false;
 
     public void OnButtonEnter(GameObject pointer)
@@ -17,6 +20,22 @@ public class PauseMenu : MonoBehaviour
         pointer.SetActive(false);
     }
 
+    void TurnOffOtherUI()
+    {
+        foreach (Transform canvasElement in canvas.transform)
+        {
+            canvasElement.gameObject.SetActive(false);
+        }
+    }
+
+    void TurnOnOtherUI()
+    {
+        foreach (Transform canvasElement in canvas.transform)
+        {
+            canvasElement.gameObject.SetActive(true);
+        }
+    }
+
     public void GamePausing()
     {
         isPaused = !isPaused;
@@ -24,13 +43,20 @@ public class PauseMenu : MonoBehaviour
         if (isPaused)
         {
             Time.timeScale = 0f;
-            gameObject.SetActive(true);
+            pauseMenu.SetActive(true);
         }
         else
         {
             Time.timeScale = 1f;
-            gameObject.SetActive(false);
+            pauseMenu.SetActive(false);
         }
+    }
+
+    public void ShowLostScreen()
+    {
+        TurnOffOtherUI();
+        lostMenu.SetActive(true);
+        Time.timeScale = 0f;
     }
 
     public void RestartGame()

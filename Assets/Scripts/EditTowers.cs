@@ -39,12 +39,14 @@ public class EditTowers : MonoBehaviour
     Bank bank;
     GridManager gridManager;
     Pathfinder pathfinder;
+    MessageHandler messageHandler;
 
     Vector3 transformUpgrade;
     Vector3 transformConstruction;
     float menuSpeed = 1f;
     int editCase = 0;
     int currentCost = 0;
+    String warningMessage;
 
     //[Header("Side Menu Buttons")]
     //[SerializeField] List<Button> constructionButtons = new List<Button>();
@@ -60,6 +62,8 @@ public class EditTowers : MonoBehaviour
         bank = FindObjectOfType<Bank>();
         gridManager = FindObjectOfType<GridManager>();
         pathfinder = FindObjectOfType<Pathfinder>();
+        messageHandler = FindObjectOfType<MessageHandler>();
+
         //FindEditButtons();
     }
 
@@ -315,9 +319,17 @@ public class EditTowers : MonoBehaviour
         switch(editCase)
         {
             case 0:
-                if (gridManager.Grid[tileCoordinates].isWalkable && !tile.HasPlaced && !pathfinder.WillBlockPath(tileCoordinates))
+                if (gridManager.Grid[tileCoordinates].isWalkable && !tile.HasPlaced)
                 {
-                    DogInstantiator();
+                    if (!pathfinder.WillBlockPath(tileCoordinates))
+                    {
+                        DogInstantiator();
+                    }
+                    else
+                    {
+                        warningMessage = "! Cats Preventing You To Block All Paths !";
+                        messageHandler.ShowWarningMessage(warningMessage);
+                    }
                 }
                 else if (!gridManager.Grid[tileCoordinates].isWalkable && tile.HasPlaced && !pathfinder.WillBlockPath(tileCoordinates))
                     DogRemover();
@@ -347,6 +359,11 @@ public class EditTowers : MonoBehaviour
             gridManager.BlockNode(tileCoordinates);
             pathfinder.NotifyRecievers();
         }
+        else
+        {
+            warningMessage = "! Low Currency !";
+            messageHandler.ShowWarningMessage(warningMessage);
+        }
     }
 
     private void DogRemover()
@@ -363,7 +380,11 @@ public class EditTowers : MonoBehaviour
             return;
 
         if (bank.CurrentBalance < destroyableObstacle.RemovePrice)
+        {
+            warningMessage = "! Low Currency !";
+            messageHandler.ShowWarningMessage(warningMessage);
             return;
+        }
 
         Destroy(destroyObject);
         
@@ -375,6 +396,19 @@ public class EditTowers : MonoBehaviour
 
     void DogPowerUp(Tower myTower)
     {
-        myTower.TowerPowerUp();
+        if (bank.CurrentBalance < tower.Upgrade)
+        {
+            warningMessage = "! Low Currency !";
+            messageHandler.ShowWarningMessage(warningMessage);
+            return;
+        }
+        
+        bool poweredUp= myTower.TowerPowerUp();
+
+        if (!poweredUp)
+        {
+            warningMessage = "! This Dog is Maxed Out !";
+            messageHandler.ShowWarningMessage(warningMessage);
+        }
     }
 }

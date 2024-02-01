@@ -13,8 +13,8 @@ public class Tower : MonoBehaviour
     [SerializeField] int upgrade = 25;
     public int Upgrade { get { return upgrade; } }
     [SerializeField] float buildSecForEachPart = 0.2f;
-    [SerializeField] float atkSpeedIncRate = 20f;
-    [SerializeField] float atkRangeIncRate = 10f;
+    [SerializeField] float atkSpeedIncRate = 0.15f;
+    [SerializeField] float atkRangeIncRate = 5f;
     public ParticleSystem myParticleSystem;
     [SerializeField] GameObject stars;
 
@@ -58,7 +58,6 @@ public class Tower : MonoBehaviour
         foreach (Transform child in buildingTower.GetComponentInChildren<TargetLocator>().transform)
         {
             child.gameObject.SetActive(true);
-            Debug.Log(i);
             i++;
             yield return new WaitForSeconds(buildSecForEachPart);
         }
@@ -83,13 +82,13 @@ public class Tower : MonoBehaviour
         }
     }
 
-    public void TowerPowerUp()
+    public bool TowerPowerUp()
     {
         Bank bank = FindObjectOfType<Bank>();
 
         if (powerLevel == 3 || bank == null)
         {
-            return;
+            return false;
         }
         else
         {
@@ -111,7 +110,10 @@ public class Tower : MonoBehaviour
         }
 
         ParticleSystem.MainModule mainModule= myParticleSystem.main;
-        mainModule.startSpeedMultiplier += atkSpeedIncRate;
+        mainModule.simulationSpeed += atkSpeedIncRate;
+        mainModule.startLifetime = mainModule.startLifetime.constant + atkSpeedIncRate;
         gameObject.GetComponentInChildren<TargetLocator>().range += atkRangeIncRate;
+
+        return true;
     }
 }

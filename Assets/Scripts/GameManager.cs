@@ -4,18 +4,26 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] PauseMenu pauseMenu;
+    MenuManager menuManager;
+    bool gameEnded;
 
     private void Start()
     {
+        menuManager = FindObjectOfType<MenuManager>();
         Time.timeScale = 1.0f;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && pauseMenu != null)
+        if (Input.GetKeyDown(KeyCode.Escape) && menuManager != null && !gameEnded)
         {
-            pauseMenu.GamePausing();
+            menuManager.GamePausing();
         }
+    }
+
+    public void LostGame()
+    {
+        gameEnded = true;
+        FindObjectOfType<MenuManager>().ShowLostScreen();
     }
 }

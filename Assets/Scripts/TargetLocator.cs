@@ -40,8 +40,11 @@ public class TargetLocator : MonoBehaviour
     private void AimAtEnemy()
     {
         if (target == null)
+        {
+            Attack(false);
             return;
-        
+        }
+
         float targetDistance = Vector3.Distance(transform.position, target.transform.position);
         
         if (targetDistance < range)

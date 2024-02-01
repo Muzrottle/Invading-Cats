@@ -39,7 +39,7 @@ public class Bank : MonoBehaviour
 
         if (currentBalance < 0)
         {
-            ReloadScene();
+            FindObjectOfType<GameManager>().LostGame();
         }
     }
 
@@ -76,9 +76,9 @@ public class Bank : MonoBehaviour
             );
     }
 
-    void ReloadScene()
-    {
-        Scene currentScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(currentScene.buildIndex);
-    }
+    //void ReloadScene()
+    //{
+    //    Scene currentScene = SceneManager.GetActiveScene();
+    //    SceneManager.LoadScene(currentScene.buildIndex);
+    //}
 }

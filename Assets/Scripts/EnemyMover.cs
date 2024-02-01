@@ -6,12 +6,14 @@ using UnityEngine;
 [RequireComponent(typeof(Enemy))]
 public class EnemyMover : MonoBehaviour
 {
+    [SerializeField] GameObject m_Enemy;
     [SerializeField] [Range(0f,10f)] float movementSpeed = 1f;
     [SerializeField] [Range(0f,10f)] float rotationSpeed = 1f;
 
     List<Node> path = new List<Node>();
 
     Enemy enemy;
+    WaveHandler waveHandler;
     GridManager gridManager;
     Pathfinder pathfinder;
 
@@ -24,6 +26,7 @@ public class EnemyMover : MonoBehaviour
     private void Awake()
     {
         enemy = GetComponent<Enemy>();
+        waveHandler = FindObjectOfType<WaveHandler>();
         gridManager = FindObjectOfType<GridManager>();
         pathfinder = FindObjectOfType<Pathfinder>();
     }
@@ -62,14 +65,14 @@ public class EnemyMover : MonoBehaviour
             Vector3 nextPos = gridManager.GetPositionFromCoordinates(path[i].coordinates);
 
             float travelAmount = 0f;
-            float rotationDegrees = degreesToRotate(transform.forward, currentPos, nextPos);
+            float rotationDegrees = degreesToRotate(m_Enemy.transform.forward, currentPos, nextPos);
 
             while (travelAmount < 1f)
             {
                 if (travelAmount < 0.25f)
                 {
                     float rotationAngle = 4 * rotationDegrees * Time.deltaTime * rotationSpeed;
-                    transform.Rotate(new Vector3(0, rotationAngle, 0));
+                    m_Enemy.transform.Rotate(new Vector3(0, rotationAngle, 0));
                 }
 
                 travelAmount += Time.deltaTime * movementSpeed;
@@ -91,6 +94,7 @@ public class EnemyMover : MonoBehaviour
     void FinishPath()
     {
         enemy.StealGold();
+        waveHandler.LowerAliveCount();
         gameObject.SetActive(false);
     }
 
